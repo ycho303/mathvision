@@ -16,7 +16,7 @@ using namespace cv;
 
 enum { NORMAL, CONCAVE, TWIST, REFLECTION, CONCAVE_REFLECTION };
 
-int checkHomography(const std::vector<cv::Point2f>& pts1, const std::vector<cv::Point2f>& pts2)
+int classifyHomography(const std::vector<cv::Point2f>& pts1, const std::vector<cv::Point2f>& pts2)
 {
     if (pts1.size() != 4 || pts2.size() != 4) return -1;
 
@@ -104,7 +104,7 @@ void proc_video(VideoCapture& vc, Mat& model)
             perspectiveTransform(corner_pts1, corner_pts2, H);
 
             // check if the estimated homography is valid or not
-            int homo_type = checkHomography(corner_pts1, corner_pts2);
+            int homo_type = classifyHomography(corner_pts1, corner_pts2);
             char type_str[100];
             switch (homo_type)
             {
