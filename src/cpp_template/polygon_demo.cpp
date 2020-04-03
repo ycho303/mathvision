@@ -89,7 +89,7 @@ void PolygonDemo::refreshWindow()
                 break;
             case CONCAVE_REFLECTION:
                 sprintf_s(type_str, 100, "concave reflection");
-               break;
+                break;
             }
 
             putText(frame, type_str, Point(15, 125), FONT_HERSHEY_SIMPLEX, 1, Scalar(0, 255, 255), 1);
@@ -118,9 +118,9 @@ int PolygonDemo::polyArea(const std::vector<cv::Point>& vtx)
     double area = 0;
     for (int i = 0; i < vtx.size(); i++)
     {
-        cout << "\n (" << vtx[i].x << ", " <<  vtx[i].y << ")";
+        cout << "\n (" << vtx[i].x << ", " << vtx[i].y << ")";
         int j = (i + 1) % vtx.size();
-        area += (vtx[i].x * vtx[j].y - vtx[j].x * vtx[i].y) * 0.5;
+        area += 0.5 * ((vtx[i].x - vtx[0].x) * (vtx[j].y - vtx[0].y) - (vtx[i].y - vtx[0].y) * (vtx[j].x - vtx[0].x));
     }
     return abs(area);
 }
@@ -135,9 +135,36 @@ bool PolygonDemo::ptInPolygon(const std::vector<cv::Point>& vtx, Point pt)
 int PolygonDemo::classifyHomography(const std::vector<cv::Point>& pts1, const std::vector<cv::Point>& pts2)
 {
     if (pts1.size() != 4 || pts2.size() != 4) return -1;
+    
+    int state[4];
+    for (int j = 0; j < 4; j++)
+    {
+        int i = (j - 1) % pts1.size();
+        int k = (j + 1) % pts1.size();
 
+        Point pjpi, pjpk, qjqi, qjqk;
+        pjpi = pts1[j] - pts1[i];
+        pjpk = pts1[j] - pts1[k];
+        qjqi = pts2[j] - pts2[i];
+        qjqk = pts2[j] - pts2[k];
 
-    return NORMAL;
+        //a1b2 - a2b1
+        int jp = pjpi.x * pjpk.y - pjpi.y * pjpk.x;
+        int jq = qjqi.x * qjqk.y - qjqi.y * qjqk.x;
+        state[j] = (jp * jq);
+    }
+
+    int count_pos = 0;
+    int count_neg = 0;
+    for (int i = 0; i < 4; i++) {
+        if (state[i] > 0) count_pos++;
+        if (state[i] < 0) count_neg++;
+    }
+    if (count_pos == 3) return CONCAVE;
+    else if (count_neg == 3) return CONCAVE_REFLECTION;
+    else if (count_pos == 4) return NORMAL;
+    else if (count_neg == 4) return REFLECTION;
+    else return TWIST;
 }
 
 // estimate a circle that best approximates the input points and return center and radius of the estimate circle
@@ -211,22 +238,22 @@ void PolygonDemo::handleMouseEvent(int evt, int x, int y, int flags)
     {
     }
 
-    if (flags&cv::EVENT_FLAG_LBUTTON)
+    if (flags & cv::EVENT_FLAG_LBUTTON)
     {
     }
-    if (flags&cv::EVENT_FLAG_RBUTTON)
+    if (flags & cv::EVENT_FLAG_RBUTTON)
     {
     }
-    if (flags&cv::EVENT_FLAG_MBUTTON)
+    if (flags & cv::EVENT_FLAG_MBUTTON)
     {
     }
-    if (flags&cv::EVENT_FLAG_CTRLKEY)
+    if (flags & cv::EVENT_FLAG_CTRLKEY)
     {
     }
-    if (flags&cv::EVENT_FLAG_SHIFTKEY)
+    if (flags & cv::EVENT_FLAG_SHIFTKEY)
     {
     }
-    if (flags&cv::EVENT_FLAG_ALTKEY)
+    if (flags & cv::EVENT_FLAG_ALTKEY)
     {
     }
 }

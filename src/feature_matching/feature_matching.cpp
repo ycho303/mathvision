@@ -5,9 +5,9 @@
 #include "opencv2/calib3d.hpp"
 #include "opencv2/imgproc.hpp"
 #ifdef _DEBUG
-#pragma comment(lib,"opencv_world320d.lib")
+#pragma comment(lib,"opencv_world420d.lib")
 #else
-#pragma comment(lib,"opencv_world320.lib")
+#pragma comment(lib,"opencv_world420.lib")
 #endif
 
 using namespace std;
@@ -19,8 +19,35 @@ enum { NORMAL, CONCAVE, TWIST, REFLECTION, CONCAVE_REFLECTION };
 int classifyHomography(const std::vector<cv::Point2f>& pts1, const std::vector<cv::Point2f>& pts2)
 {
     if (pts1.size() != 4 || pts2.size() != 4) return -1;
+    int state[4];
+    for (int j = 0; j < 4; j++)
+    {
+        int i = (j - 1) % pts1.size();
+        int k = (j + 1) % pts1.size();
 
-    return NORMAL;
+        Point pjpi, pjpk, qjqi, qjqk;
+        pjpi = pts1[j] - pts1[i];
+        pjpk = pts1[j] - pts1[k];
+        qjqi = pts2[j] - pts2[i];
+        qjqk = pts2[j] - pts2[k];
+
+        //a1b2 - a2b1
+        int jp = pjpi.x * pjpk.y - pjpi.y * pjpk.x;
+        int jq = qjqi.x * qjqk.y - qjqi.y * qjqk.x;
+        state[j] = (jp * jq);
+    }
+
+    int count_pos = 0;
+    int count_neg = 0;
+    for (int i = 0; i < 4; i++) {
+        if (state[i] > 0) count_pos++;
+        if (state[i] < 0) count_neg++;
+    }
+    if (count_pos == 3) return CONCAVE;
+    else if (count_neg == 3) return CONCAVE_REFLECTION;
+    else if (count_pos == 4) return NORMAL;
+    else if (count_neg == 4) return REFLECTION;
+    else return TWIST;
 }
 
 
@@ -28,7 +55,7 @@ void proc_video(VideoCapture& vc, Mat& model)
 {
     int min_match_num = 4;
     Mat model_gray;
-    cvtColor(model, model_gray, CV_BGR2GRAY);
+    cvtColor(model, model_gray, cv::COLOR_BGR2GRAY);
 
     // local feature method
     Ptr<Feature2D> fd = ORB::create();
@@ -54,7 +81,7 @@ void proc_video(VideoCapture& vc, Mat& model)
         // grab frame
         vc >> frame;
         if (frame.empty()) break;
-        cvtColor(frame, gray, CV_BGR2GRAY);
+        cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
 
         // detect keypoints
         vector<KeyPoint> img_keypts;

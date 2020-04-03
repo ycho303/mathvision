@@ -15,7 +15,7 @@ struct PolygonDemoParam
 
     PolygonDemoParam()
     {
-        compute_area = true;
+        compute_area = false;
         draw_line = true;
         check_ptInPoly = true;
         check_homography = true;
