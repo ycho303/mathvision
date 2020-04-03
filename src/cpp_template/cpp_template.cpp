@@ -2,9 +2,9 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 #ifdef _DEBUG
-#pragma comment(lib,"opencv_world320d.lib")
+#pragma comment(lib,"opencv_world420d.lib")
 #else
-#pragma comment(lib,"opencv_world320.lib")
+#pragma comment(lib,"opencv_world420.lib")
 #endif
 
 #include "polygon_demo.hpp"

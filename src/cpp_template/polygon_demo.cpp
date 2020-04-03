@@ -1,5 +1,6 @@
 #include "polygon_demo.hpp"
 #include "opencv2/imgproc.hpp"
+#include <iostream>
 
 using namespace std;
 using namespace cv;
@@ -38,11 +39,11 @@ void PolygonDemo::refreshWindow()
             {
                 if (ptInPolygon(m_data_pts, m_test_pts[i]))
                 {
-                    circle(frame, m_test_pts[i], 2, Scalar(0, 255, 0), CV_FILLED);
+                    circle(frame, m_test_pts[i], 2, Scalar(0, 255, 0), cv::FILLED);
                 }
                 else
                 {
-                    circle(frame, m_test_pts[i], 2, Scalar(128, 128, 128), CV_FILLED);
+                    circle(frame, m_test_pts[i], 2, Scalar(128, 128, 128), cv::FILLED);
                 }
             }
         }
@@ -64,8 +65,8 @@ void PolygonDemo::refreshWindow()
             for (int i = 0; i < 4; i++)
             {
                 line(frame, rc_pts[i], m_data_pts[i], Scalar(255, 0, 0), 1);
-                circle(frame, rc_pts[i], 2, Scalar(0, 255, 0), CV_FILLED);
-                circle(frame, m_data_pts[i], 2, Scalar(0, 255, 0), CV_FILLED);
+                circle(frame, rc_pts[i], 2, Scalar(0, 255, 0), cv::FILLED);
+                circle(frame, m_data_pts[i], 2, Scalar(0, 255, 0), cv::FILLED);
                 putText(frame, abcd[i], m_data_pts[i], FONT_HERSHEY_SIMPLEX, .8, Scalar(0, 255, 255), 1);
             }
 
@@ -103,7 +104,7 @@ void PolygonDemo::refreshWindow()
             if (ok)
             {
                 circle(frame, center, (int)(radius + 0.5), Scalar(0, 255, 0), 1);
-                circle(frame, center, 2, Scalar(0, 255, 0), CV_FILLED);
+                circle(frame, center, 2, Scalar(0, 255, 0), cv::FILLED);
             }
         }
     }
@@ -114,7 +115,14 @@ void PolygonDemo::refreshWindow()
 // return the area of polygon
 int PolygonDemo::polyArea(const std::vector<cv::Point>& vtx)
 {
-    return 0;
+    double area = 0;
+    for (int i = 0; i < vtx.size(); i++)
+    {
+        cout << "\n (" << vtx[i].x << ", " <<  vtx[i].y << ")";
+        int j = (i + 1) % vtx.size();
+        area += (vtx[i].x * vtx[j].y - vtx[j].x * vtx[i].y) * 0.5;
+    }
+    return abs(area);
 }
 
 // return true if pt is interior point
@@ -127,6 +135,7 @@ bool PolygonDemo::ptInPolygon(const std::vector<cv::Point>& vtx, Point pt)
 int PolygonDemo::classifyHomography(const std::vector<cv::Point>& pts1, const std::vector<cv::Point>& pts2)
 {
     if (pts1.size() != 4 || pts2.size() != 4) return -1;
+
 
     return NORMAL;
 }
@@ -145,7 +154,7 @@ void PolygonDemo::drawPolygon(Mat& frame, const std::vector<cv::Point>& vtx, boo
     int i = 0;
     for (i = 0; i < (int)m_data_pts.size(); i++)
     {
-        circle(frame, m_data_pts[i], 2, Scalar(255, 255, 255), CV_FILLED);
+        circle(frame, m_data_pts[i], 2, Scalar(255, 255, 255), cv::FILLED);
     }
     for (i = 0; i < (int)m_data_pts.size() - 1; i++)
     {
@@ -159,7 +168,7 @@ void PolygonDemo::drawPolygon(Mat& frame, const std::vector<cv::Point>& vtx, boo
 
 void PolygonDemo::handleMouseEvent(int evt, int x, int y, int flags)
 {
-    if (evt == CV_EVENT_LBUTTONDOWN)
+    if (evt == cv::EVENT_LBUTTONDOWN)
     {
         if (!m_data_ready)
         {
@@ -171,53 +180,53 @@ void PolygonDemo::handleMouseEvent(int evt, int x, int y, int flags)
         }
         refreshWindow();
     }
-    else if (evt == CV_EVENT_LBUTTONUP)
+    else if (evt == cv::EVENT_LBUTTONUP)
     {
     }
-    else if (evt == CV_EVENT_LBUTTONDBLCLK)
+    else if (evt == cv::EVENT_LBUTTONDBLCLK)
     {
         m_data_ready = true;
         refreshWindow();
     }
-    else if (evt == CV_EVENT_RBUTTONDBLCLK)
+    else if (evt == cv::EVENT_RBUTTONDBLCLK)
     {
     }
-    else if (evt == CV_EVENT_MOUSEMOVE)
+    else if (evt == cv::EVENT_MOUSEMOVE)
     {
     }
-    else if (evt == CV_EVENT_RBUTTONDOWN)
+    else if (evt == cv::EVENT_RBUTTONDOWN)
     {
         m_data_pts.clear();
         m_test_pts.clear();
         m_data_ready = false;
         refreshWindow();
     }
-    else if (evt == CV_EVENT_RBUTTONUP)
+    else if (evt == cv::EVENT_RBUTTONUP)
     {
     }
-    else if (evt == CV_EVENT_MBUTTONDOWN)
+    else if (evt == cv::EVENT_MBUTTONDOWN)
     {
     }
-    else if (evt == CV_EVENT_MBUTTONUP)
+    else if (evt == cv::EVENT_MBUTTONUP)
     {
     }
 
-    if (flags&CV_EVENT_FLAG_LBUTTON)
+    if (flags&cv::EVENT_FLAG_LBUTTON)
     {
     }
-    if (flags&CV_EVENT_FLAG_RBUTTON)
+    if (flags&cv::EVENT_FLAG_RBUTTON)
     {
     }
-    if (flags&CV_EVENT_FLAG_MBUTTON)
+    if (flags&cv::EVENT_FLAG_MBUTTON)
     {
     }
-    if (flags&CV_EVENT_FLAG_CTRLKEY)
+    if (flags&cv::EVENT_FLAG_CTRLKEY)
     {
     }
-    if (flags&CV_EVENT_FLAG_SHIFTKEY)
+    if (flags&cv::EVENT_FLAG_SHIFTKEY)
     {
     }
-    if (flags&CV_EVENT_FLAG_ALTKEY)
+    if (flags&cv::EVENT_FLAG_ALTKEY)
     {
     }
 }
