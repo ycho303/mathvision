@@ -2,4 +2,8 @@
 
 Mathematical Tools for Computer Vision
 
-* Download [OpenCV binary](https://github.com/roricljy/MISC_DATA/releases/download/misc/OpenCV_v3.2.0_32bit.zip) for Windows
+HW_5: RigidBody Rotation
+
+Code Location: RigidBody\ Rotation/Assets/compute_user_input.cs
+
+Used with Unity; attach to a gameObject or open matrix_rotation.unity scene.
