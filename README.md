@@ -6,11 +6,14 @@ HW_5: RigidBody Rotation
 
 ![picture](demo.png)
 
-Homework code is HW5_Code.cs. If you want to test this code, add the following script to the Assets folder and attach to an empty gameObject. 
+Homework code is in RigidBody\ Rotation/Assets/Scripts/HW5_Code.cs. If you want to test this code, use the HW5_test scene RigidBody\ Rotation/Assets/Scenes/. 
 
 In RigidBody\ Rotation/Assets/Scripts/compute_user_rotation.cs, you can find the modified version used for this demo.
 
-You can try the demo by downloading the Matrix_rotation_demo file. Note that it was built on OSX. Make sure to set the Graphics Quality to "Ultra" as low quality makes objects disappear/reappear.
+You can try the demo by downloading the Matrix_rotation_demo file:
+https://drive.google.com/open?id=1orIUXbI8_EX8XisUvR3CVVfVfoEyWU8M
+
+Note that it was built on OSX. Make sure to set the Graphics Quality to "Ultra" as low quality makes objects disappear/reappear.
 
 Alternatively, you can open Unity and navigate to RigidBody\ Rotation/Assets/Scenes/space_matrix_rotation to try the demo.
 
