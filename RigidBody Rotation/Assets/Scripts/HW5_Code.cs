@@ -31,7 +31,7 @@ public class HW5_Code : MonoBehaviour {
 		float r1_sine = Vector3.Cross(h,hp).magnitude / hhp_mag;
 		float r1_cosine = Vector3.Dot(h,hp) / hhp_mag;
 		Vector3[] r1 = rotation_matrix(u, r1_sine, r1_cosine);
-		print("r1");
+		print("R1");
 		print(r1[0].ToString("F10"));
 		print(r1[1].ToString("F10"));
 		print(r1[2].ToString("F10"));
@@ -49,7 +49,7 @@ public class HW5_Code : MonoBehaviour {
 		float r2_cosine = Vector3.Dot(r1p2p1, p2p-p1p) / r2_mag;
 
 		Vector3[] r2 = v2v_3x3transpose(rotation_matrix(v, r2_sine, r2_cosine));
-		print("r2");
+		print("R2");
 		print(r2[0].ToString("F10"));
 		print(r2[1].ToString("F10"));
 		print(r2[2].ToString("F10"));

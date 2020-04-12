@@ -1737,7 +1737,7 @@ GameObject:
 Transform:
   m_PrefabParentObject: {fileID: 426654, guid: 27fe6d2a15a377f4587f716a2d37ca8a, type: 2}
   m_PrefabInternal: {fileID: 306447963}
---- !u!114 &2021723356
+--- !u!114 &2021723357
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -1745,11 +1745,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 2021723354}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f77aa80556d3437c87c7f5c1aaa7ced, type: 3}
+  m_Script: {fileID: 11500000, guid: 34c20de9ecc8bde41b5ed3a66a8071a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotate_left: 0
-  rotate_speed: 10
+  spin: 1
+  spinParent: 0
+  speed: 10
+  clockwise: 1
+  direction: 1
+  directionChangeSpeed: 2
 --- !u!1 &2043806778
 GameObject:
   m_ObjectHideFlags: 0

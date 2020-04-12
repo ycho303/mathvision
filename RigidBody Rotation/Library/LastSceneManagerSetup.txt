@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/HW5_test.unity
+- path: Assets/Scenes/space_matrix_rotation.unity
   isLoaded: 1
   isActive: 1
