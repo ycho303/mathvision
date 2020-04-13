@@ -2,9 +2,11 @@
 
 Mathematical Tools for Computer Vision
 
-HW_5: RigidBody Rotation
 
 ![picture](demo.png)
+
+
+###### HW_5: RigidBody Rotation
 
 Homework code is in RigidBody\ Rotation/Assets/Scripts/HW5_Code.cs. If you want to test this code, use the HW5_test scene RigidBody\ Rotation/Assets/Scenes/. 
 
