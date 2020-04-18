@@ -23,6 +23,7 @@ int main(int argc, char* argv[])
     // main window
     Mat frame = Mat::zeros(480, 640, CV_8UC3);
     putText(frame, "Input data points (double click: finish)", Point(10, 470), FONT_HERSHEY_SIMPLEX, .5, Scalar(0, 148, 0), 1);
+    putText(frame, "Double right click for RANSAC: false", Point(10, 20), FONT_HERSHEY_SIMPLEX, .5, Scalar(0, 148, 0), 1);
     imshow("PolygonDemo", frame);
 
     // event handler µî·Ï

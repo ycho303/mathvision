@@ -1,6 +1,5 @@
 #ifndef _POLYGON_DEMO_H_
 #define _POLYGON_DEMO_H_
-
 #include "opencv2/highgui.hpp"
 
 struct PolygonDemoParam
@@ -12,16 +11,18 @@ struct PolygonDemoParam
     bool fit_line;
     bool fit_circle;
     bool fit_ellipse;
+    bool ransac;
 
     PolygonDemoParam()
     {
         compute_area = false;
-        draw_line = true;
-        check_ptInPoly = true;
-        check_homography = true;
+        draw_line = false;
+        check_ptInPoly = false;
+        check_homography = false;
         fit_line = false;
         fit_circle = false;
-        fit_ellipse = false;
+        fit_ellipse = true;
+        ransac = false; // Do not change; Double right click to toggle
     }
 };
 
@@ -45,7 +46,10 @@ public:
 
     bool fitLine(const std::vector<cv::Point>& pts, cv::Point2d& center, double& radius);
     bool fitCircle(const std::vector<cv::Point>& pts, cv::Point2d& center, double& radius);
-    bool fitEllipse(const std::vector<cv::Point>& pts, cv::Point2d& m, cv::Point2d& v);
+    bool fitEllipse(const std::vector<cv::Point>& pts, cv::Point2d& center, cv::Size& axes, double& angle);
+    int* sampler(int sample_size, int population_size);
+    bool PolygonDemo::compute_circle_ransac(const std::vector<cv::Point>& pts, cv::Point2d& center, double& radius);
+    bool PolygonDemo::compute_ellipse_ransac(const std::vector<cv::Point>& pts, cv::Point2d& center, cv::Size& axes, double& angle);
 
 protected:
     bool m_data_ready;
