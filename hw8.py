@@ -60,15 +60,15 @@ def multivariate_gaussian(data, mean, cov):
     fac = np.einsum('...k,kl,...l->...', data - mean, np.linalg.inv(cov), data - mean)
     return np.exp(-fac / 2) / np.sqrt((2*np.pi)**mean.shape[0] * np.linalg.det(cov))
 
-def plot_gauss(X, Y, Z, title):
+def plot_gauss(x, y, z, title):
     fig = plt.figure()
 
     ax1 = fig.add_subplot(2, 1, 1, projection='3d')
-    ax1.plot_surface(X, Y, Z, rstride=3, cstride=3, linewidth=1, antialiased=True, cmap=cm.viridis)
+    ax1.plot_surface(x, y, z, rstride=3, cstride=3, linewidth=1, antialiased=True, cmap=cm.viridis)
     ax1.view_init(55, -70)
 
     ax2 = fig.add_subplot(2, 1, 2, projection='3d')
-    ax2.contourf(X, Y, Z, zdir='z', offset=0, cmap=cm.viridis)
+    ax2.contourf(x, y, z, zdir='z', offset=0, cmap=cm.viridis)
     ax2.view_init(90, 270)
     ax2.grid(False)
     ax2.set_zticks([])
@@ -77,16 +77,16 @@ def plot_gauss(X, Y, Z, title):
     plt.show()
 
 data = np.linspace(-10, 10, 100)
-X, Y = np.meshgrid(data, data)
-data = np.empty(X.shape + (2,))
-data[:, :, 0] = X
-data[:, :, 1] = Y
+x, y = np.meshgrid(data, data)
+data = np.empty(x.shape + (2,))
+data[:, :, 0] = x
+data[:, :, 1] = y
 
-Z = multivariate_gaussian(data, mean_a, cov_a)
-plot_gauss(X, Y, Z, 'data_a')
+z = multivariate_gaussian(data, mean_a, cov_a)
+plot_gauss(x, y, z, 'data_a')
 
-Z = multivariate_gaussian(data, mean_b, cov_b)
-plot_gauss(X, Y, Z, 'data_b')
+z = multivariate_gaussian(data, mean_b, cov_b)
+plot_gauss(x, y, z, 'data_b')
 
 # Mahalanobis distance
 test_1 = v.dot(test.iloc[[0]].transpose())
