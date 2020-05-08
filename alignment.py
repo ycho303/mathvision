@@ -8,6 +8,11 @@ import dlib
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor('./shape_predictor_5_face_landmarks.dat')
 
+def scale_image(path, new_width, new_height):
+    img = Image.open(path)
+    img = img.resize((new_height, new_width), Image.ANTIALIAS)
+    return cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
+
 def image_alignment(path):
     img = cv2.imread(path)
 
@@ -90,7 +95,4 @@ def image_alignment(path):
 
     img = Image.fromarray(img)
     img = np.array(img.rotate(angle))
-    # img = Image.fromarray(img)
-    # img.show()
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    return gray
+    return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

@@ -41,13 +41,13 @@ def reconstruct_image(_all, img, mean, k):
     _, _, eigenvector = np.linalg.svd(_all, full_matrices=False)
     return np.dot(np.dot(img, eigenvector.T)[:, 0:k], eigenvector[0:k, :]), eigenvector
 
-def compute_distance(train_x, train_y, train_img, test_img, eigenvector, k):
-    predictions = np.vstack([train_x[compute_nearest(train_img, test_img, eigenvector, i, k), :] for i in range(test_img.shape[0])])
-    labels = [train_y[compute_nearest(train_img, test_img, eigenvector, i, k)] for i in range(test_img.shape[0])]
+def predict_face(train_x, train_y, train_img, test_img, eigenvector, k):
+    predictions = np.vstack([train_x[euclidian_distance(train_img, test_img, eigenvector, i, k), :] for i in range(test_img.shape[0])])
+    labels = [train_y[euclidian_distance(train_img, test_img, eigenvector, i, k)] for i in range(test_img.shape[0])]
     return predictions, labels
 
-def compute_nearest(train_img, test_img, eigenvector, idx, k):
-    eigen_weights = np.dot(eigenvector[:k, :], train_img.T)
-    test_weight = np.dot(eigenvector[:k, :], test_img[idx: idx+1, :].T)
-    euclidian = np.sqrt(np.sum((eigen_weights - test_weight) ** 2, axis=0))
+def euclidian_distance(train_img, test_img, eigenvector, idx, k):
+    train_space = np.dot(eigenvector[:k, :], train_img.T)
+    test_space = np.dot(eigenvector[:k, :], test_img[idx: idx+1, :].T)
+    euclidian = np.sqrt(np.sum((train_space - test_space) ** 2, axis=0))
     return np.argmin(euclidian)
