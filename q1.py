@@ -20,7 +20,6 @@ def gloabl_thresholding(title, n, img):
 
 '''Read image and get shape'''
 img = cv2.imread('./hw11_sample.png').astype(int)
-# img = cv2.imread('./test.png')
 img = img[:,:,0]
 w, h = img.shape
 
