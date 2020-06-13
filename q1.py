@@ -24,15 +24,6 @@ def get_Z(x, y, grad=0):
     else:
         raise NotImplementedError(f'Gradient of {grad} not implemented!')
 
-def find_critical(x, y):
-    X = (1 + y)*(x*y + x*y**2) + (x + y)*(1*y + 1*y**2)
-    Y = (x + 1)*(x*y + x*y**2) + (x + y)*(x*1 + 2*x*y)
-    for idx, x in enumerate(X):
-        for idy, y in enumerate(Y):
-            if x == 0:
-                if y == 0:
-                    print(idx, idy)
-
 '''Q1.1'''
 dense = 100
 step = 0.1
