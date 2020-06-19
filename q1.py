@@ -7,7 +7,7 @@ random.seed(1)
 
 PLOT_Q1 = False
 PLOT_Q2 = True
-PLOT_Q3 = True
+PLOT_Q3 = False
 PLOT_Q4 = False
 
 
@@ -114,7 +114,7 @@ if PLOT_Q3 or PLOT_Q4:
         ax.scatter(*gd, gd_z, alpha=0.5, marker="*", c='m')
 
         gd_z = round(gd_z, 4)
-        if gd_z == epsilon:
+        if gd_z == epsilon or gd_z > ga_epsilon:
             break
         else:
             epsilon = gd_z
