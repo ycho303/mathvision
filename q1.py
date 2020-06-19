@@ -2,11 +2,11 @@ from tkinter import *
 from PIL import ImageTk, Image
 import numpy as np
 
-def get_y(x, a, b, c, d):
-    return a * np.sin(b * x + c) + d
-
-def jacobian(x, a, b, c, d):
-    return [-np.sin(b * x + c), -a * x * np.cos(b * x + c), -a * np.cos(b * x + c), -1]
+def sine_func(x, a, b, c, d, jacobian=False):
+    if not jacobian:
+        return a * np.sin(b * x + c) + d
+    else:
+        return [-np.sin(b * x + c), -a * x * np.cos(b * x + c), -a * np.cos(b * x + c), -1]
 
 def compatable_img(img):
     return ImageTk.PhotoImage(img)
@@ -34,6 +34,7 @@ class MainWindow():
         self.x = []
         self.y = []
         self.image_on_canvas = self.canvas.create_image(0, 0, anchor=NW, image=self.my_image)
+        print('Cleared!')
 
     def draw_pt(self, x, y):
         if not processed:
@@ -46,7 +47,7 @@ class MainWindow():
     def plot_sine(self, p):
         self.canvas.delete(self.plot)
         x = np.linspace(0, self.w, self.w)
-        func_y = np.array([get_y(x, *p) for x in x])
+        func_y = np.array([sine_func(x, *p) for x in x])
         self.plot = self.canvas.create_line([(x, y) for x, y in zip(x, func_y)], fill='green')
 
     def delta_p(self, p_, p):
@@ -62,14 +63,14 @@ class MainWindow():
         p = [np.std(self.y), 0.01, 40, np.mean(self.y)]
 
         for i in range(term_max_iter):
-            func_y = np.array([get_y(x, *p) for x in self.x])
+            func_y = np.array([sine_func(x, *p) for x in self.x])
 
             r = self.y - func_y
-            j = np.vstack([jacobian(x, *p) for x in self.x])
+            j = np.vstack([sine_func(x, *p, jacobian=True) for x in self.x])
             p_ = np.array(p) - np.linalg.inv(j.T @ j) @ j.T @ r
 
             if self.delta_p(p_, p) < term_tolerance:
-                print(f'break at iter: {i}')
+                print(f'Break at iter: {i}')
                 break
 
             p = p_
