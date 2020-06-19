@@ -1,132 +1,106 @@
+from tkinter import *
+from PIL import ImageTk, Image
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib import cm
-from mpl_toolkits.mplot3d import Axes3D
-import random
-random.seed(1)
 
-PLOT_Q1 = False
-PLOT_Q2 = True
-PLOT_Q3 = False
-PLOT_Q4 = False
+def get_y(x, a, b, c, d):
+    return a * np.sin(b * x + c) + d
 
+def jacobian(x, a, b, c, d):
+    return [-np.sin(b * x + c), -a * x * np.cos(b * x + c), -a * np.cos(b * x + c), -1]
 
-def get_Z(x, y, grad=0):
-    if grad == 0:
-        return np.sin(x + y - 1) + (x - y - 1)**2 - 1.5*x + 2.5*y + 1
-    elif grad == 1:
-        return np.cos(-x - y + 1) + 2*x - 2*y - 3.5, \
-               np.cos(-x - y + 1) - 2*x + 2*y + 4.5
-               
-    elif grad == 2:
-        return np.array([[np.sin(-x-y+1)+2, np.sin(-x-y+1)-2],\
-                         [np.sin(-x-y+1)-2, np.sin(-x-y+1)+2]])
-    else:
-        raise NotImplementedError(f'Gradient of {grad} not implemented!')
+def compatable_img(img):
+    return ImageTk.PhotoImage(img)
 
-'''Q1.1'''
-dense = 100
-step = 0.1
-_X = np.arange(-1, 5+step, step)
-_Y = np.arange(-3, 4+step, step)
-X, Y = np.meshgrid(_X, _Y)
-Z = get_Z(X, Y)
+class MainWindow():
 
-if PLOT_Q1:
-    fig = plt.figure()
-    ax = plt.axes(projection='3d')
-    surface = ax.contour3D(X, Y, Z, dense, cmap='summer') 
-    fig.colorbar(surface, shrink=0.5, aspect=5) 
+    def __init__(self, main):        
+        background = Image.open('./canvas.jpg')
+        self.w, h = background.size
 
-'''Q1.2'''
-LAMBDA = 0.1
-x0 = random.uniform(-1, 5)
-y0 = random.uniform(-3, 4)
-z0 = get_Z(x0, y0, grad=0)
-print(f'x0: {x0}, y0: {y0}')
+        self.canvas = Canvas(main, width=self.w, height=h)
+        self.canvas.grid(row=0, column=1)
 
-if PLOT_Q2 or PLOT_Q4:
-    fig = plt.figure()
-    ax = plt.axes(projection='3d')
-    surface = ax.contour3D(X, Y, Z, dense, alpha=0.3, cmap='summer') 
-    fig.colorbar(surface, shrink=0.5, aspect=5)
+        self.my_image = compatable_img(background)
+        self.image_on_canvas = self.canvas.create_image(0, 0, anchor=NW, image=self.my_image)
 
-    ga = (x0, y0)
-    gd = (x0, y0)
-    ga_epsilon = np.amax(Z) # cheating for better vis
-    gd_epsilon = np.amin(Z)
+        self.x = []
+        self.y = []
+        self.plot = None
+        
+    def clear(self):
+        global processed
+        processed = False
+        self.canvas.delete('all')
+        self.x = []
+        self.y = []
+        self.image_on_canvas = self.canvas.create_image(0, 0, anchor=NW, image=self.my_image)
 
-    ga_optimal, gd_optimal = False, False
-    iteration, ga_optimal_found, gd_optimal_found = [0]*3
-    while not gd_optimal: #or not ga_optimal:
-        iteration+=1
-        # if not ga_optimal:
-        #     ga_x, ga_y = get_Z(*ga, grad=1)
-        #     ga = (ga[0] + LAMBDA * ga_x, ga[1] + LAMBDA * ga_y)
-        #     ga_z = get_Z(*ga, grad=0)
-        #     ax.scatter(*ga, ga_z, alpha=0.5, marker="*", c='red')
-
-        if not gd_optimal:
-            gd_x, gd_y = get_Z(*gd, grad=1)
-            gd = (gd[0] - LAMBDA * gd_x, gd[1] - LAMBDA * gd_y)
-            gd_z = get_Z(*gd, grad=0)
-            ax.scatter(*gd, gd_z, alpha=0.5, marker="*", c='blue')
-
-        # if ga_z > ga_epsilon and not ga_optimal:
-        #     ga_optimal = True
-        #     ga_optimal_found = iteration
-        #     ga_epsilon = ga_z
-
-        if gd_z < gd_epsilon and not gd_optimal:
-            gd_optimal = True
-            gd_optimal_found = iteration
-            gd_epsilon = gd_z
-
-    # ax.scatter(x0, y0, z0, alpha=0.5, marker="*", c='red', label=f'gradient ascend  ({round(ga_epsilon, 2)} at iter {ga_optimal_found})')
-    ax.scatter(x0, y0, z0, alpha=0.5, marker="*", c='blue', label=f'gradient descent ({round(gd_epsilon, 2)} at iter {gd_optimal_found})')
-    ax.set_xlabel(f'init: ({round(x0, 2)}, {round(y0, 2)}, {round(z0, 2)})')
-    # plt.axis('off')
-    plt.title('SGD')
-    fig.legend()
-
-'''Q1.3'''
-if PLOT_Q3:
-    fig = plt.figure()
-    ax = plt.axes(projection='3d')
-    surface = ax.contour3D(X, Y, Z, dense, alpha=0.3, cmap='summer') 
-    fig.colorbar(surface, shrink=0.5, aspect=5)
-
-if PLOT_Q3 or PLOT_Q4:
-
-    gd = (x0, y0)
-    epsilon = -9999
-    iteration = 0
-    while True:
-        iteration+=1
-
-        gd_g = get_Z(*gd, grad=1)
-        hessian = get_Z(*gd, grad=2)
-        u, s, v = np.linalg.svd(hessian, full_matrices=True)
-        newton_hessian = np.linalg.inv(np.matmul(u*abs(s), v))
-        gd = gd - np.matmul(newton_hessian, gd_g)
-
-        gd_z = get_Z(*gd, grad=0)
-        ax.scatter(*gd, gd_z, alpha=0.5, marker="*", c='m')
-
-        gd_z = round(gd_z, 4)
-        if gd_z == epsilon or gd_z > ga_epsilon:
-            break
+    def draw_pt(self, x, y):
+        if not processed:
+            self.x.append(x)
+            self.y.append(y)
+            self.canvas.create_circle(x, y, 3, fill="white")
         else:
-            epsilon = gd_z
+            print('Press "c" to restart')
 
+    def plot_sine(self, p):
+        self.canvas.delete(self.plot)
+        x = np.linspace(0, self.w, self.w)
+        func_y = np.array([get_y(x, *p) for x in x])
+        self.plot = self.canvas.create_line([(x, y) for x, y in zip(x, func_y)], fill='green')
 
-    ax.scatter(x0, y0, z0, alpha=0.8, marker="*", c='m', label=f'Newton\'s Method ({round(epsilon, 2)} at iter {iteration})')
-    ax.set_xlabel(f'init: ({round(x0, 2)}, {round(y0, 2)}, {round(z0, 2)})')
-    # plt.axis('off')
-    if not PLOT_Q4:
-        plt.title('Newton\'s Method')
-    else:
-        plt.title('')
-    fig.legend()
+    def delta_p(self, p_, p):
+        return np.linalg.norm(np.absolute(p_-p))
 
-plt.show()
+    def fit(self):
+        global processed
+        processed = True
+        self.x = np.array(self.x)
+        self.y = np.array(self.y)
+        term_max_iter = 1000
+        term_tolerance = 1e-10
+        p = [np.std(self.y), 0.01, 40, np.mean(self.y)]
+
+        for i in range(term_max_iter):
+            func_y = np.array([get_y(x, *p) for x in self.x])
+
+            r = self.y - func_y
+            j = np.vstack([jacobian(x, *p) for x in self.x])
+            p_ = np.array(p) - np.linalg.inv(j.T @ j) @ j.T @ r
+
+            if self.delta_p(p_, p) < term_tolerance:
+                print(f'break at iter: {i}')
+                break
+
+            p = p_
+            self.plot_sine(p)
+
+event_x, event_y = 0, 0
+processed = False
+
+def detectMotion(event):
+    global event_x, event_y
+    event_x, event_y = event.x, event.y
+
+def drawOnLeftClick(event):
+    model.draw_pt(event_x, event_y)
+
+def clear(event):
+    model.clear()
+
+def _create_circle(self, x, y, r, **kwargs):
+    return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
+
+def submit(event):
+    model.fit()
+
+import tkinter as tk
+tk.Canvas.create_circle = _create_circle
+root = Tk()
+root.title('Sine Fitting')
+model = MainWindow(root)
+root.bind('<Motion>', detectMotion)
+root.bind("<Button-1>", drawOnLeftClick)
+root.bind("c", clear)
+root.bind('<Return>', submit)
+root.mainloop()
